@@ -1,7 +1,7 @@
 export function randomID(len: number) {
   let result = '';
   if (result) return result;
-  const chars = '12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP',
+  const chars = '12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP';
     const maxPos = chars.length;
     let i;
 

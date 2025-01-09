@@ -1,6 +1,7 @@
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { Element } from './type';
 import { getUrlParams, randomID } from './functions';
+import { baseUrl } from './const';
 
 export default function App() {
       const roomID = getUrlParams().get('roomID') || randomID(5);
@@ -18,12 +19,9 @@ export default function App() {
         container: element,
         sharedLinks: [
           {
-            name: 'Personal link',
+            name: 'Meeting link',
             url:
-             window.location.protocol + '//' + 
-             window.location.host + window.location.pathname +
-              '?roomID=' +
-              roomID,
+              baseUrl +'?roomID=' +roomID,
           },
         ],
         scenario: {
