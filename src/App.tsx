@@ -2,11 +2,12 @@ import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { Element } from './type';
 import { getUrlParams, randomID } from './functions';
 import { baseUrl } from './const';
-import './index.css'  // atau sesuaikan dengan lokasi file CSS Anda
-import { Share2 } from 'lucide-react';
-
+import './index.css';
+import { Share2, Users } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function App() {
+  const [participantCount, setParticipantCount] = useState(0);
   const roomID = getUrlParams().get('roomID') || randomID(5);
 
   const myMeeting = async (element: Element) => {
@@ -21,7 +22,7 @@ export default function App() {
     );
 
     const zp = ZegoUIKitPrebuilt.create(kitToken);
-    
+
     zp.joinRoom({
       container: element,
       sharedLinks: [
@@ -33,6 +34,12 @@ export default function App() {
       scenario: {
         mode: ZegoUIKitPrebuilt.GroupCall,
       },
+      onUserJoin: (users) => {
+        setParticipantCount(users.length);
+      },
+      onUserLeave: (users) => {
+        setParticipantCount(Math.max(0, users.length));
+      },
     });
   };
 
@@ -42,42 +49,48 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+    <div className="min-h-screen bg-white text-black font-sans">
       {/* Header */}
-      <header className="p-4 md:p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+      <header className="p-3 sm:p-4 md:p-6">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-black">
             Video Meeting
           </h1>
-          <button
-            onClick={copyLink}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-          >
-            <Share2 size={20} />
-            <span className="hidden md:inline">Share Link</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center bg-gray-200 px-3 py-1.5 rounded-lg">
+              <Users size={16} className="text-gray-500 mr-2" />
+              <span className="text-sm font-sans">{participantCount} Participant{participantCount !== 1 ? 's' : ''}</span>
+            </div>
+            <button
+              onClick={copyLink}
+              className="flex items-center gap-2 px-3 py-1.5 bg-lime-400 hover:bg-lime-500 rounded-lg transition-colors font-sans"
+            >
+              <Share2 size={16} />
+              <span className="text-sm font-sans">Share</span>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto p-4 md:p-6">
-        <div className="bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-          <div
-            className="aspect-video w-full"
-            ref={myMeeting}
-          />
-        </div>
+      <main className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+        <div
+          className="aspect-video w-full bg-gradient-to-br from-blue-600 to-black rounded-lg"
+          ref={myMeeting}
+        />
 
         {/* Room Info */}
-        <div className="mt-4 p-4 bg-gray-800/50 rounded-lg">
-          <div className="flex items-center justify-between">
+        <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-gray-200 rounded-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div>
-              <p className="text-gray-400 text-sm">Room ID</p>
-              <p className="font-mono text-lg">{roomID}</p>
+              <p className="text-gray-500 text-xs sm:text-sm font-serif">Room ID</p>
+              <p className="font-mono text-base sm:text-lg break-all text-black font-semibold">{roomID}</p>
             </div>
-            <div className="text-right">
-              <p className="text-gray-400 text-sm">Participants</p>
-              <p className="text-lg font-semibold">0</p>
+            <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-4">
+              <div className="flex items-center sm:hidden">
+                <Users size={16} className="text-gray-500 mr-2" />
+                <span className="text-sm font-sans">{participantCount} Participant{participantCount !== 1 ? 's' : ''}</span>
+              </div>
             </div>
           </div>
         </div>
